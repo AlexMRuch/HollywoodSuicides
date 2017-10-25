@@ -1,4 +1,4 @@
-# [THE MOVIE DB API] (https://www.themoviedb.org/documentation/api)
+# [THE MOVIE DB API](https://www.themoviedb.org/documentation/api)
 
 ## ***API Overview***
 
