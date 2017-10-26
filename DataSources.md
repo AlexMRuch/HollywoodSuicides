@@ -17,6 +17,7 @@
 
 
 ## ***Movie Data***
+* [Overview: 52 Movie APIs](https://www.programmableweb.com/news/52-movies-apis-rovi-rotten-tomatoes-and-internet-video-archive/2013/01/22)
 * [The Movie Database (TMDb)](https://www.themoviedb.org/)
 * [The Open Movie Database (OMDb)](http://www.omdbapi.com/)
 * [The Internet Movie Database (IMDb)](http://www.imdb.com/)
