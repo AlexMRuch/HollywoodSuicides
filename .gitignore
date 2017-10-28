@@ -2,6 +2,10 @@
 ########
 APIKeys.md
 
+# Other files #
+###############
+IMDbNetwork_katie-truong.ipynb
+
 # Compiled source #
 ###################
 *.com
@@ -29,6 +33,7 @@ APIKeys.md
 *.log
 *.sql
 *.sqlite
+.Rhistory
 
 # OS generated files #
 ######################
