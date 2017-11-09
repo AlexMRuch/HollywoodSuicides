@@ -3,12 +3,12 @@
 ## ***Actor Data***
 
 ### List: Actors/Actresses Who Committed Suicide
-* [Wikipedia: Category: American male actors who committed suicide](https://en.wikipedia.org/wiki/Category:American_male_actors_who_committed_suicide)
+* [Wikipedia: Category: American actors who committed suicide](https://en.wikipedia.org/wiki/Category:American_male_actors_who_committed_suicide)
 * [Wikipedia: Category: American actresses who committed suicide](https://en.wikipedia.org/wiki/Category:American_actresses_who_committed_suicide)
 
 ### List: All Actors/Actresses
-* [Wikipedia: Category: American male actors](https://en.wikipedia.org/wiki/Category:American_male_actors)
-* [Wikipedia: Category: American actresses](https://en.wikipedia.org/wiki/Category:American_actresses)
+* [Wikipedia: Category: American film actors](https://en.wikipedia.org/wiki/Category:American_male_film_actors)
+* [Wikipedia: Category: American film actresses](https://en.wikipedia.org/wiki/Category:American_film_actresses)
 
 ## ***Movie Data***
 * [Overview: 52 Movie APIs](https://www.programmableweb.com/news/52-movies-apis-rovi-rotten-tomatoes-and-internet-video-archive/2013/01/22)
@@ -19,7 +19,10 @@
 
 
 ## ***API Links***
-* [Wikipedia: Local API](https://en.wikipedia.org/w/api.php), [API sandbox](https://en.wikipedia.org/wiki/Special:ApiSandbox#action=login&lgname=Bob), and [help page](https://www.mediawiki.org/wiki/API:Main_page) (scraping allowed)
+* [Wikipedia: Local API](https://en.wikipedia.org/w/api.php) (scraping allowed)
+	* [main API help page](https://www.mediawiki.org/wiki/API:Main_page) 
+	* [API sandbox](https://en.wikipedia.org/wiki/Special:ApiSandbox#action=login&lgname=Bob)
+	* [Main page](https://www.mediawiki.org/wiki/API:Main_page)
 	* [Query help](https://www.mediawiki.org/wiki/API:Query)
 	* [Links help](https://www.mediawiki.org/wiki/API:Links)
 * [TMDb: Local API](https://www.themoviedb.org/documentation/api)
