@@ -5,8 +5,10 @@
 
 # Stage 1 deliverables:
 # TODO: Extract Dataset A: actor/actress data
+    # TODO: add wait times
 # TODO: Extract Dataset M: movie data
 # TODO: Identify and extract Dataset O: other relevant data
+    # TODO: Extract race (by text or pics)
 # TODO: Determine data structure(s)
 # TODO: Create Joined Dataset: joined Datasets A, M, O
 
@@ -46,75 +48,96 @@ linkroot = 'https://en.wikipedia.org'
 datasetA = {}
 
 def getactsu(wikies_su = wikies_su):
-    '''Extracts names, Wiki links, and suicide status. Input wikies_su is a list
-    of links to Wikipedia pages for film actors/actresses who committed suicide.'''
+    '''Extracts names, Wiki links, sex, and suicide. Input wikies_su is a list
+    of Wikipedia category pages for film actors/actresses who committed suicide.'''
     sex = -1  # initialize sex indicator (0=male, 1=female)
-    for wiki in wikies_su:  # start group look (L0)
+    # L0: start group look
+    for wiki in wikies_su:
         sex += 1
         try:
             page = urlopen(wiki)
+            print('Opening:', wiki)
         except:
             print('EXCEPTION: urlopen() failed. Processing ended on', wiki)
         soup = BeautifulSoup(page, 'html.parser')
         names_box = soup.find_all("div", class_="mw-category-group")
         box = -1  # initialize name group index
-        while box < len(names_box) - 1:  # start name group loop (L1)
+        # L1: start name group loop
+        while box < len(names_box) - 1:
             box += 1
-            for l in names_box[box].find_all('a'):  # start within name look (L3)
+            print('Processing name box', str(box), 'of', str(len(names_box)-1))
+            # L2: start within name look
+            for l in names_box[box].find_all('a'):
                 name = l.text  # get name
+                print('Get name:', name)
                 namelink = linkroot + l.get('href')  # get namelink
+                print('    Get namelink:', namelink)
                 datasetA[name] = {}  # add name to datasetA
                 datasetA[name]['namelink'] = namelink  # add namelink to name dict
                 datasetA[name]['suicide'] = True  # add suicide to name dict
                 if sex == 0:
                     datasetA[name]['sex'] = 'male'
-                else:
+                    print('    Get sex: male')
+                if sex == 1:
                     datasetA[name]['sex'] = 'female'
+                    print('    Get sex: female')
 
 
 def getactnosu(wikies_nosu = wikies_nosu):
-    '''Extracts names, Wiki links, and no suicide status. Input wikies_nosu is a
+    '''Extracts names, Wiki links, sex, and no suicide. Input wikies_nosu is a
     list of lists with links to Wikipedia pages for film actors/actresses who
     did not commit suicide.'''
-    sex = -1 # initialize sex indicator (0=male, 1=female)
-    for genderlist in wikies_nosu:  # start groups loop (L0)
+    sex = -1 # initialize sex indicator (0=male, 1=female): get list's lists
+    # L0: start genderlist loop
+    for genderlist in wikies_nosu:
         sex += 1
         print('Begin loop in', genderlist)
-        for link in genderlist:  # start link loop (L1) in current group loop (L0)
+        # L1: start looping through link pages of genderlist: get list elements
+        for link in genderlist:
             try:
                 page = urlopen(link)
+                print('Opening:', link)
             except:
                 print('EXCEPTION: urlopen() failed. Processing ended on', link)
             soup = BeautifulSoup(page, 'html.parser')
             names_box = soup.find_all("div", class_="mw-content-ltr")[2]  # get names/links
             names_box = names_box.find_all('a')
             box = -1  # initialize name group index
-            while box < len(names_box) - 1:  # start name group loop (L2)
+            # L2: loop through name groups on link page
+            while box < len(names_box) - 1:
                 box += 1
-                for l in names_box[box].find_all('a'):  # start within name loop (l3)
+                print('Processing name box', str(box), 'of', str(len(names_box)-1))
+                # L3: start within name loop
+                for l in names_box[box].find_all('a'):
                     name = l.text  # get name
+                    print('Get name:', name)
                     namelink = linkroot + l.get('href')  # get namelink
+                    print('    Get namelink:', namelink)
                     datasetA[name] = {}  # add name to datasetA
                     datasetA[name]['namelink'] = namelink  # add namelink to name dict
                     datasetA[name]['suicide'] = False  # add suicide to name dict
                     if sex == 0:
                         datasetA[name]['sex'] = 'male'
-                    else:
+                        print('    Get sex: male')
+                    if sex == 1:
                         datasetA[name]['sex'] = 'female'
-
+                        print('    Get sex: female')
+            # After processing all names_box, get next page link
             try:
-                nextlink = soup.find_all("div", id="mw-pages")  # get all nextlink tag
-                nextlink = str(mwpages)[str(mwpages).rfind('/w/'):]  # get start of nextlink str
-                if "previous page" in nextlink:  # True if "next page" is inactive (last page)
-                    print('BREAKING: Last page processed or next page link not extracted')
+                nextlink = soup.find_all("div", id="mw-pages")  # get page links
+                nextlink = str(mwpages)[str(mwpages).rfind('/w/'):]  # slice nextlink front
+                if "previous page" in nextlink:  # = next page inactive, last page
+                    print('CONTINUE: Last page processed or next page not extracted')
                     print("'nextlink' =", nextlink, '. Check previous/next pages')
-                    break
-                nextlink = nextlink[:nextlink.index('"')]  # get end to slice nextlink
-                nextlink = linkroot + nextlink  # append nextlink end to linkroot
-                wikies_nosu[genderlist].append(nextlink)
+                    continue  # Move to L1 if no next page (L2 for loop expires)
+                nextlink = nextlink[:nextlink.index('"')]  # slice nextlink end
+                nextlink = linkroot + nextlink  # add nextlink to linkroot
+                wikies_nosu[genderlist].append(nextlink)  # append nextlnik to L1
+            # If no more next page links or genderlist elements:
             except:
-                print('EXCEPTION: Processing ended on the following page:')
+                print('BREAK: Processing ended on the following page:')
                 print(link)
+                print('Failed command: soup.find_all("div", id="mw-pages")')
                 break
 
 
