@@ -19,12 +19,14 @@
 
 
 ## ***API Links***
-* [Wikipedia: Local API](https://en.wikipedia.org/w/api.php) (scraping allowed)
-	* [main API help page](https://www.mediawiki.org/wiki/API:Main_page) 
-	* [API sandbox](https://en.wikipedia.org/wiki/Special:ApiSandbox#action=login&lgname=Bob)
-	* [Main page](https://www.mediawiki.org/wiki/API:Main_page)
+* [Wikipedia: Local API](https://en.wikipedia.org/w/api.php) (scraping allowed on individual pages)
+	* [Main help page](https://www.mediawiki.org/wiki/API:Main_page) 
 	* [Query help](https://www.mediawiki.org/wiki/API:Query)
-	* [Links help](https://www.mediawiki.org/wiki/API:Links)
+	* [Category members help](https://www.mediawiki.org/wiki/API:Categorymembers)
+	* [Limits help](https://www.mediawiki.org/wiki/API:Lists#Limits)
+	* [Format help: JSON version 2](https://www.mediawiki.org/wiki/API:JSON_version_2)
+	* [Etiquette help](https://www.mediawiki.org/wiki/API:Etiquette)
+	* Note 1: Specifying titles through the query string (either through `titles` or `pageids`) is limited to 50 titles per query
 * [TMDb: Local API](https://www.themoviedb.org/documentation/api)
 * [OMDb: Local API](http://www.omdbapi.com/)
 * [AllMovie website](https://www.allmovie.com/) (scraping allowed)

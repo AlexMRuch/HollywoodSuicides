@@ -35,6 +35,7 @@ IMDbNetwork_katie-truong.ipynb
 *.sqlite
 .Rhistory
 .ipynb_checkpoints/
+__pycache__/*
 
 # OS generated files #
 ######################
