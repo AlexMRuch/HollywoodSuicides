@@ -5,7 +5,6 @@
 
 # Stage 1 deliverables:
 # TODO: Extract Dataset A: actor/actress data
-    # TODO: use getactnames() to get actor/actress names/links
     # TODO: use wikipedia.py to get actor/actress data
 # TODO: Extract Dataset M: movie data
 # TODO: Identify and extract Dataset O: other relevant data
@@ -17,10 +16,11 @@
 # Import data extraction packages
 import requests
 import json
-import time
-import wikipedia  # https://pypi.python.org/pypi/wikipedia
+from time import sleep
+import get_data  # https://github.com/scraperwiki/wikipedia-infobox-tool
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+import re
 # Import data structuring packages
 import numpy as np
 import datetime as dt
@@ -32,6 +32,7 @@ import os.path
 '''PART 1: EXTRACT ACTOR/ACTRESS DATA AND GENERATE DATASET A '''
 # Initialize dict for datasetA
 datasetA = {}
+errors = []
 
 # Set links for main pages
 male_su = 'Category:American_male_actors_who_committed_suicide'
@@ -52,7 +53,7 @@ def getactnames(namesdict = namesdict):
     if os.path.isfile(data/actnames.pickle):
         run = input('actnames.pickle detected. Continue to run getactnames()? (Y/N): )')
         if (run.lower() == 'y') or (run.lower() == 'yes'):
-            continue
+            pass
     # L0: Loop through Wiki categories
     for group in namesdict:
         print('Begin reqesting', group)
@@ -66,14 +67,14 @@ def getactnames(namesdict = namesdict):
             'continue':'',
             'format':'json'
         }
-        headers = {'User-agent':'amr442@cornell.edu', 'request-delay':'1s'}
+        headers = {'User-agent':'amr442@cornell.edu', 'request-delay':'50ms'}
         timeout = 10
         call = -1
         # L1: Keep calling until all group data extracted (500 results per call)
         while True:
             call += 1
             print('Call request', call)
-            time.sleep(1)
+            sleep(0.05)  # 50 ms
             result = requests.get(api, params=params, headers=headers, timeout=timeout)
             if result.raise_for_status() != None:
                 raise Error(result.raise_for_status())
@@ -113,23 +114,19 @@ def getactnames(namesdict = namesdict):
         print('Finished requests in group', group)
         params['cmcontinue'] = ''
         params['continue'] = ''
+    datasetA = {k:v for k,v in datasetA.items() if 'Category' not in k}
     print('Finished all requests for all groups. Saving as data/actnames.pickle.')
     with open('data/actnames.pickle', 'wb') as f:
         pickle.dump(datasetA, f, pickle.HIGHEST_PROTOCOL)
     print('Save complete. Function finished.')
 
 
-def opendata(file):
-    with open('data/' + str(file), 'rb') as f:
-        data = input('Name data object (eg, datasetA, datasetM, datasetO): ')
-        data = pickle.load(f)
-
-
-def getactdata(datasetA = datasetA):
-    '''Extracts wiki content, including biography, key dates, and career data.
-    NOTE: Must run getactsu() and getactnosu() first to extract titles/links.
-    NOTE: datasetA is a dict of of dicts of titles and wiki links.'''
-    # Use wiki links to access life info table class = "infobox biography vcard"
+def getactinfobox(datasetA = datasetA):
+    '''Extracts Wikipedia infobox data (born, died, cause of death, nationality,
+    years active, spouse(s), etc). NOTE: Must run getactnames() first to extract
+    datasetA, a dict of dicts of actors'/actresses' titles and pageids.'''
+    # Modified from github.com/scraperwiki/wikipedia-infobox-tool/get_data.py
+    # Check datasetA
     if len(datasetA) == 0:
         print('NOTE: datasetA is empty.')
         if os.path.isfile(data/actnames.pickle):
@@ -138,17 +135,66 @@ def getactdata(datasetA = datasetA):
                 with open('data/actnames.pickle', 'rb') as f:
                     datasetA = pickle.load(f)
             else:
-                raise Error('Must run getactnames() first.')
+                raise Error('Must run getactnames() first to get datasetA.')
         else:
-            raise Error('Must run getactnames() first.')
-    # Use wikipedia.py package to get actors/actresses wikipedia page data
+            raise Error('Must run getactnames() first to get datasetA.')
+    # L0: Loop through acts and give their pageids to scrape_infobox()
+    call = -1
+    for act in datasetA:
+        pageid = datasetA[act]['pageid']
+        call += 1
+        if call % 1000 == 0:
+            print('Called', call, 'out of', len(datasetA), 'requests')
+        # Begin extracting infobox biography data via Wiki API
+        data = get_data.scrape_infobox(pageid)
+        # Append info dict to  datasetA[act] dict
+        try:
+            datasetA[act] = {**datasetA[act], **data}
+        except:
+            errors.append([act, type(data)])
+            pass
+    print(errors)
+
+
+def getacttitle(searchdic, pageid):
+    for k_searchdict in searchdic:
+        try:
+            for k_actdict,v_actvar in searchdic[k_searchdict].items():
+                if v_actvar == pageid:
+                    return k_searchdict
+        except:
+            pass
+
+
+def getactpageid(searchdic, title):
+    for k_searchdict in searchdic:
+        try:
+            if k_searchdict == title:
+                return searchdic[k_searchdict]['pageid']
+        except:
+            pass
+
+
+def getactsuicide(searchdic, title):
+    for k_searchdict in searchdic:
+        try:
+            if k_searchdict == title:
+                return searchdic[k_searchdict]['suicide']
+        except:
+            pass
 
 
 def cleanactdata(datasetA = datasetA):
-    # Delete "Category" titled keys
-    ## ['category' in m.lower() for m in list(ex.datasetA.keys())]
-    # Rename '(Actor)' and '(Actress)' from titles
-    ## [print(m) for m in list(ex.datasetA.keys()) if '(' in m.lower() or ')' in m.lower()]
+    '''Edits datasetA to remove any incorrectly extracted element and to remove
+    any string from title keys that is not part of one's name (eg, "(actor)",
+    "(actress)", etc.'''
+    # Search for elements with 'Category' in the title key
+    ['category' in m for m in list(ex.datasetA.keys())]
+    # Append erroneously extracted element ids to a list
+    # Print list of errors and use input to confirm popping in datasetA
+    # Search for elements with non-name text in the title key (eg, '(actor)')
+    [print(m) for m in list(ex.datasetA.keys()) if '(' in m.lower() or ')' in m.lower()]
+    # Edit title to remove non-name text so only name remains in title key
 
 
 
@@ -208,7 +254,7 @@ def getactsu(wikies_su = wikies_su):
                 if male == 0:
                     datasetA[title]['male'] = 'female'
                     print('    Get sex: female')
-        time.sleep(1)
+        sleep(1)
 '''
 
 ''' Extracts titles, Wiki links, sex, and no suicide. Input wikies_nosu is a
@@ -224,7 +270,7 @@ def getactnosu(wikies_nosu = wikies_nosu):
         for link in genderlist:
             try:
                 # Make API request; receive event node field and/or edge data response
-                time.sleep(1)
+                sleep(0.05)
                 print('Opening:', link)
                 req = requests.get(link)
                 req = req.json()

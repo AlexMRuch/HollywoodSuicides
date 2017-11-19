@@ -5,6 +5,8 @@ APIKeys.md
 # Other files #
 ###############
 IMDbNetwork_katie-truong.ipynb
+wikipedia-infobox-tool/
+get_data.py
 
 # Compiled source #
 ###################
@@ -36,6 +38,7 @@ IMDbNetwork_katie-truong.ipynb
 .Rhistory
 .ipynb_checkpoints/
 __pycache__/*
+__init__.py
 
 # OS generated files #
 ######################

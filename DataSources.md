@@ -26,6 +26,7 @@
 	* [Limits help](https://www.mediawiki.org/wiki/API:Lists#Limits)
 	* [Format help: JSON version 2](https://www.mediawiki.org/wiki/API:JSON_version_2)
 	* [Etiquette help](https://www.mediawiki.org/wiki/API:Etiquette)
+	* [Performance guidelines](https://www.mediawiki.org/wiki/Performance_guidelines)
 	* Note 1: Specifying titles through the query string (either through `titles` or `pageids`) is limited to 50 titles per query
 * [TMDb: Local API](https://www.themoviedb.org/documentation/api)
 * [OMDb: Local API](http://www.omdbapi.com/)
@@ -34,7 +35,7 @@
 
 
 ## ***Python Packages***
-* [Wikipedia: wikipedia](https://pypi.python.org/pypi/wikipedia) and [help page](https://wikipedia.readthedocs.io/en/latest/code.html)
+* [Wikipedia: wikipedia-infobox-tool/get_data.py](https://github.com/scraperwiki/wikipedia-infobox-tool/blob/master/get_data.py)
 * [TMDb: tmdbsimple](https://pypi.python.org/pypi/tmdbsimple)
 * [OMDb: omdb](https://pypi.python.org/pypi/omdb)
 * [IMDb: IMDbPY (NOTE: Downlaod plain text data files from IMDb/AWS first)](http://imdbpy.sourceforge.net/)
